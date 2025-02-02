@@ -5,3 +5,4 @@ __pycache__
 *.log.*
 *.logs.*
 FlowLauncher
+test.py
