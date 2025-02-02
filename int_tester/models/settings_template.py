@@ -10,7 +10,7 @@ class _BaseAttributesWoDefValue(Model):
 
 
 class BaseAttributes(_BaseAttributesWoDefValue):
-    defaultValue: str | None = None
+    defaultValue: str | int | None = None
 
 
 class TextBlockFieldAttrs(Model):
