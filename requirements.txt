@@ -1,5 +1,0 @@
-aioconsole
-msgspec
-aiohttp
-pyyaml
-click
