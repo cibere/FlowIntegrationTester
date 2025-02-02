@@ -2,9 +2,11 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 import json
+from yarl import URL
 from .default_flow_settings import default_flow_settings
+from .zip import extract_zip
 
-Filetree = dict[str, "Filetree | str"]
+Filetree = dict[str, "Filetree | str | URL"]
 MISSING: Any = object()
 
 
@@ -23,11 +25,18 @@ raw_filetree: Filetree = {
             "Plugins": {},
         },
         "Themes": {},
+        "Environments": {
+            "Python": {
+                "PythonEmbeddable-v3.11.4": URL(
+                    "https://www.python.org/ftp/python/3.11.4/python-3.11.4-embed-amd64.zip"
+                )
+            }
+        },
     }
 }
 
 
-def build_filetree(tree: Filetree = MISSING, parent: Path = MISSING):
+async def build_filetree(tree: Filetree = MISSING, parent: Path = MISSING):
     if tree is MISSING:
         tree = raw_filetree
 
@@ -45,6 +54,9 @@ def build_filetree(tree: Filetree = MISSING, parent: Path = MISSING):
                 backup_file = path.with_suffix(".bak")
                 with backup_file.open("w", encoding="UTF-8") as f:
                     f.write(value)
+        elif isinstance(value, URL):
+            path.mkdir()
+            await extract_zip(value, path)
         else:
             path.mkdir(exist_ok=True)
-            build_filetree(value, path)
+            await build_filetree(value, path)

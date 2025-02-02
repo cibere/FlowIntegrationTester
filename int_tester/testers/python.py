@@ -2,7 +2,6 @@ from __future__ import annotations
 from int_tester.plugin import Plugin
 from typing import Self
 import asyncio
-import sys
 from int_tester.models.v1 import Request as RequestPayload
 import json
 
@@ -23,9 +22,10 @@ class V1PythonPluginTester:
         settings = self.plugin.init_settings()
 
         payload = RequestPayload(method="query", parameters=[""], settings=settings)
+        executable = self.plugin.env.python_environment_dir / "python.exe"
 
         proc = await asyncio.create_subprocess_exec(
-            sys.executable,
+            executable,
             "-S",
             exe_path,
             payload.encode().decode(),

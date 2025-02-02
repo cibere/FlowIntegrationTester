@@ -1,8 +1,7 @@
 from .tree import build_filetree
 from pathlib import Path
-import zipfile
-import aiohttp
 from yarl import URL
+from .zip import extract_zip
 
 
 class FlowEnv:
@@ -10,10 +9,13 @@ class FlowEnv:
         self.filetree_is_built: bool = False
         self.base_dir = Path("FlowLauncher")
         self.settings_dir = self.base_dir / "Settings"
+        self.python_environment_dir = (
+            self.base_dir / "Environments" / "Python" / "PythonEmbeddable-v3.11.4"
+        )
 
-    def ensure_built(self) -> None:
+    async def ensure_built(self) -> None:
         if self.filetree_is_built is False:
-            build_filetree()
+            await build_filetree()
             self.filetree_is_built = True
 
     def _remove_ext(self, before: str) -> str:
@@ -22,27 +24,12 @@ class FlowEnv:
         return ".".join(parts)
 
     async def install_plugin(self, loc: Path | URL) -> Path:
-        self.ensure_built()
+        await self.ensure_built()
 
-        if isinstance(loc, URL):
-            temp_plugins_dir = self.base_dir / "Cache" / ".temp.plugins"
-            serialized_filename = (
-                "_".join(loc.parts).replace("/", "-").replace("\\", "-")
-            )
-            file = temp_plugins_dir / serialized_filename
-
-            async with aiohttp.ClientSession() as cs:
-                async with cs.get(loc) as res:
-                    file.write_bytes(await res.read())
-        else:
-            file = loc
-
-        dir = Path("FlowLauncher", "Plugins", self._remove_ext(file.name))
+        dir = Path("FlowLauncher", "Plugins", self._remove_ext(loc.name))
         dir.mkdir()
 
-        with zipfile.ZipFile(file, "r") as zf:
-            print(f"Extracting plugin from {file.absolute()}")
-            zf.extractall(dir)
+        await extract_zip(loc, dir)
 
         return dir
 

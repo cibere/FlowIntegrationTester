@@ -2,7 +2,6 @@ from __future__ import annotations
 from int_tester.plugin import Plugin
 from typing import Self
 import asyncio
-import sys
 from asyncio.streams import StreamReader, StreamWriter
 from int_tester.models.v2 import (
     CloseRequest,
@@ -78,9 +77,10 @@ class V2PythonPluginTester:
     async def __aenter__(self) -> Self:
         manifest = self.plugin.get_manifest()
         exe_path = self.plugin.plugin_path / manifest.ExecuteFileName
+        executable = self.plugin.env.python_environment_dir / "python.exe"
 
         self.process = await asyncio.create_subprocess_exec(
-            sys.executable,
+            executable,
             exe_path,
             stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE,
