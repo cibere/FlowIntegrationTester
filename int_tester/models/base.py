@@ -22,3 +22,12 @@ class Model(msgspec.Struct):
 
     def encode(self) -> bytes:
         return msgspec.json.encode(self, enc_hook=enc_hook)
+
+
+class YamlModel(msgspec.Struct):
+    @classmethod
+    def decode(cls: type[Self], data: bytes) -> Self:
+        return msgspec.yaml.decode(data, type=cls, dec_hook=dec_hook)
+
+    def encode(self) -> bytes:
+        return msgspec.yaml.encode(self, enc_hook=enc_hook)

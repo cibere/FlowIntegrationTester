@@ -21,7 +21,7 @@ class Plugin:
         settings_dir = self.env.settings_dir / manifest.Name
         settings_dir.mkdir()
 
-        template = SettingsTemplate(file)
+        template = SettingsTemplate.from_path(file)
         data = template.create_default_settings()
         dump_settings(settings_dir, data)
         return data

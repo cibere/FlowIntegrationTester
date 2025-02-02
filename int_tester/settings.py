@@ -1,23 +1,31 @@
-import yaml
+from __future__ import annotations
 import json
 from pathlib import Path
-from ._types.settings_template import SettingsTemplate as SettingsTemplatePayload
+from .models.settings_template import (
+    SettingsTemplate as SettingsTemplatePayload,
+    BaseAttributes,
+)
 from ._types.json import Jsonable
 
 
 class SettingsTemplate:
-    def __init__(self, path: Path) -> None:
-        self.path = path
-        self.data: SettingsTemplatePayload = yaml.safe_load(self.path.read_text())
+    def __init__(self, raw: bytes) -> None:
+        data = SettingsTemplatePayload.decode(raw)
+        self.fields = data.body
+
+    @classmethod
+    def from_path(cls, path: Path) -> SettingsTemplate:
+        return cls(path.read_bytes())
 
     def create_default_settings(self) -> dict[str, Jsonable]:
         data = {}
 
-        for input in self.data["body"]:
-            name = input["attributes"].get("name")
-            default_value = input["attributes"].get("defaultValue")
-            if name is not None and default_value is not None:
-                data[name] = default_value
+        for field in self.fields:
+            if isinstance(field.attributes, BaseAttributes):
+                name = field.attributes.name
+                default_value = field.attributes.defaultValue
+                if name is not None and default_value is not None:
+                    data[name] = default_value
         return data
 
 
