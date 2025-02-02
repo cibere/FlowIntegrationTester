@@ -4,7 +4,7 @@ from .models.manifest import PluginManifest
 from .models.metadata import PluginMetadata
 from yarl import URL
 from .testers import fetch as fetch_tester
-from .settings import SettingsTemplate
+from .settings import SettingsTemplate, dump_settings
 from ._types.json import Jsonable
 
 
@@ -23,7 +23,7 @@ class Plugin:
 
         template = SettingsTemplate(file)
         data = template.create_default_settings()
-        template.dump_settings(settings_dir, data)
+        dump_settings(settings_dir, data)
         return data
 
     @property

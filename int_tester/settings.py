@@ -20,15 +20,16 @@ class SettingsTemplate:
                 data[name] = default_value
         return data
 
-    def dump_settings(self, folder: Path, settings: dict[str, Jsonable]) -> None:
-        if not folder.is_dir():
-            raise ValueError("Can only dump to a folder")
 
-        files = [
-            folder / "Settings.json",
-            folder / "Settings.json.bak",
-        ]
-        content = json.dumps(settings)
+def dump_settings(folder: Path, settings: dict[str, Jsonable]) -> None:
+    if not folder.is_dir():
+        raise ValueError("Can only dump to a folder")
 
-        for file in files:
-            file.write_text(content)
+    files = [
+        folder / "Settings.json",
+        folder / "Settings.json.bak",
+    ]
+    content = json.dumps(settings)
+
+    for file in files:
+        file.write_text(content)
