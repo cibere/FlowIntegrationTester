@@ -10,9 +10,14 @@ dependencies = [
     "aiohttp"
 ]
 
+[tool.setuptools]
+packages = [
+    "int_tester",
+]
+
 [tool.ruff]
 exclude = [
-    "venv","FlowLauncher"
+    "venv","FlowLauncher", "test.py"
 ]
 
 [tool.ruff.lint]
