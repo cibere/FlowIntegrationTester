@@ -7,7 +7,8 @@ dynamic = ["version"]
 dependencies = [
     "aioconsole==0.8.1",
     "msgspec",
-    "aiohttp"
+    "aiohttp",
+    "pyright>=1.1.393",
 ]
 
 [tool.setuptools]
@@ -66,6 +67,6 @@ skips = [
 
 [tool.pyright]
 include = [
-    "test.py", "int_tester","FlowLauncher"
+    "int_tester",
 ]
 pythonPlatform = "Windows"
